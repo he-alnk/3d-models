@@ -1,96 +1,1832 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script defer src="/_vercel/insights/script.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1.1.2/new.min.css"
-    />
-    <title>Vercel HTML Starter</title>
-    <meta
-      name="description"
-      content="High-performance HTML based website template."
-    />
-  </head>
-  <body>
-    <h1>Vercel HTML Starter</h1>
-    <p>
-      This template is a simple, but powerful single
-      <code>index.html</code> file deployed to
-      <a href="https://vercel.com">Vercel</a>. When your site is deployed, all
-      static assets (like HTML, JavaScript, CSS, images, and more) are deployed
-      globally to every
-      <a href="https://vercel.com/docs/concepts/edge-network/overview"
-        >Vercel Edge Network</a
-      >
-      region.
-    </p>
-    <h2>Simple, privacy-friendly analytics</h2>
-    <p>
-      Want to understand your visitor traffic? Vercel Analytics gives you
-      first-party, privacy-friendly traffic analytics for your HTML site. This
-      template is already configured using the following script:
-    </p>
-    <pre><code>&lt;script defer src="/_vercel/insights/script.js"&gt;&lt;/script&gt;</code></pre>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/analytics">Vercel Analytics</a>.
-    </p>
-    <h2>Integrated with git</h2>
-    <p>
-      Deploying updates to your site is as simple as
-      <code>git push</code> thanks to Vercel's advanced
-      <a href="https://vercel.com/docs/concepts/git">Git Integration</a>.
-      Support for GitHub, GitLab, Bitbucket is zero-configuration, and with the
-      flexible Vercel CLI and API, you can integrate with any tool possible.
-    </p>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/git">Git Integration</a>.
-    </p>
-    <h2>Fast <code>gzip</code> compression</h2>
-    <p>
-      To help ensure the smallest possible file sizes for your static assets,
-      the Vercel Edge Network compresses files by default using
-      <code>gzip</code>. You can also optionally use
-      <code>brotli</code> compressesion if you prefer.
-    </p>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/edge-network/compression"
-        >compression</a
-      >.
-    </p>
-    <h2>Advanced routing configuration</h2>
-    <p>
-      Vercel gives you a variety of ways to configure the routing of your
-      website. For example, adding redirects, rewrites, or headers to your page.
-      While you can use <code>vercel.json</code> to define these through JSON,
-      you can also express your routing configuration as code using
-      <a href="https://vercel.com/docs/concepts/functions/edge-middleware"
-        >Vercel Edge Middleware</a
-      >.
-    </p>
-    <p>
-      Middleware runs before the
-      <a href="https://vercel.com/docs/concepts/edge-network/caching"
-        >Vercel Edge Network Cache</a
-      >, so you can configure routing exactly as your application needs. For
-      example, this template uses <code>middleware.js</code> defined in the root
-      of the repository to add additional security headers to the site:
-    </p>
-    <pre><code>referrer-policy: origin-when-cross-origin
-strict-transport-security: max-age=31536000; includeSubDomains; preload
-x-content-type-options: nosniff
-x-dns-prefetch-control: on
-x-frame-options: DENY</code></pre>
-    <p>
-      Learn more about
-      <a href="https://vercel.com/docs/concepts/functions/edge-middleware"
-        >Vercel Edge Middleware</a
-      >.
-    </p>
-  </body>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLB Viewer - Standard Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 100;
+            max-height: calc(100vh - 20px);
+            overflow-y: auto;
+            width: 320px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #controls::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #controls::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        #controls::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+
+        #controls::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        h2 {
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #4fc3f7;
+            border-bottom: 2px solid #4fc3f7;
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            margin: 20px 0 10px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #81c784;
+            border-bottom: 1px solid rgba(129, 199, 132, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin: 5px 0;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 4px 12px rgba(240, 147, 251, 0.5);
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .button-grid button {
+            margin: 0;
+            font-size: 12px;
+            padding: 8px 12px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        input[type="file"]::file-selector-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            opacity: 0.9;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            margin: 8px 0;
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+
+        input[type="range"]::-webkit-slider-track {
+            background: rgba(255, 255, 255, 0.2);
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            margin-top: -5px;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+        }
+
+        input[type="range"]::-moz-range-track {
+            background: rgba(255, 255, 255, 0.2);
+            height: 6px;
+            border-radius: 3px;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.5);
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 8px 0;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .info-text {
+            font-size: 12px;
+            color: #aaa;
+            margin: 5px 0;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            border-left: 3px solid #4fc3f7;
+        }
+
+        .info-text.success {
+            border-left-color: #81c784;
+            color: #81c784;
+        }
+
+        .info-text.error {
+            border-left-color: #e57373;
+            color: #e57373;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .slider-value {
+            color: #4fc3f7;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: right;
+        }
+
+        #morphTargets {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #morphTargets::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #morphTargets::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        #morphTargets::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .morph-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .morph-name {
+            font-size: 11px;
+            color: #bbb;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 50px;
+            border-radius: 12px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #loading.hidden {
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #4fc3f7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4fc3f7;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #aaa;
+            text-transform: uppercase;
+        }
+
+        /* ブレンドシェイプ一覧のスタイル */
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 12px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .blendshape-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            padding: 10px;
+        }
+
+        .blendshape-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .blendshape-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .blendshape-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        .mesh-group {
+            margin-bottom: 15px;
+        }
+
+        .mesh-header {
+            font-size: 13px;
+            font-weight: 600;
+            color: #ffa726;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255, 167, 38, 0.1);
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mesh-header:hover {
+            background: rgba(255, 167, 38, 0.15);
+        }
+
+        .mesh-header .toggle-icon {
+            font-size: 10px;
+            transition: transform 0.3s;
+        }
+
+        .mesh-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .blendshape-item {
+            font-size: 11px;
+            padding: 6px 10px;
+            margin: 4px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 2px solid transparent;
+        }
+
+        .blendshape-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .blendshape-item.lip-sync {
+            border-left-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+
+        .blendshape-item.highlight {
+            background: rgba(255, 235, 59, 0.2);
+            border-left-color: #ffeb3b;
+        }
+
+        .blendshape-name {
+            flex: 1;
+            color: #ddd;
+        }
+
+        .blendshape-index {
+            font-size: 10px;
+            color: #888;
+            margin-right: 8px;
+            min-width: 30px;
+        }
+
+        .badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            background: rgba(79, 195, 247, 0.3);
+            color: #4fc3f7;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+
+        .badge.lip-sync {
+            background: rgba(79, 195, 247, 0.3);
+            color: #4fc3f7;
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .export-buttons button {
+            font-size: 11px;
+            padding: 6px 8px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-size: 12px;
+        }
+
+        /* Visemeテストのスタイル */
+        .viseme-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .viseme-btn {
+            background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
+            color: white;
+            border: none;
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(79, 195, 247, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-height: 60px;
+        }
+
+        .viseme-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 195, 247, 0.5);
+            background: linear-gradient(135deg, #29b6f6 0%, #039be5 100%);
+        }
+
+        .viseme-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 6px rgba(79, 195, 247, 0.4);
+        }
+
+        .viseme-btn .viseme-name {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .viseme-btn .viseme-phoneme {
+            font-size: 10px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .viseme-btn.active {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            box-shadow: 0 4px 12px rgba(102, 187, 106, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div id="loading">
+        <div class="spinner"></div>
+        <div id="loadingText">モデルを読み込み中...</div>
+    </div>
+
+    <div id="controls">
+        <h2>📦 GLB Viewer</h2>
+
+        <!-- ファイル読み込み -->
+        <div class="section">
+            <h3>📁 ファイル読み込み</h3>
+            <input type="text" id="urlInput" placeholder="GLBファイルのURLを入力..." />
+            <button onclick="loadFromURL()">URLから読み込み</button>
+            <input type="file" id="fileInput" accept=".glb,.gltf" />
+            <div id="fileInfo" class="info-text">URLまたはファイルを選択してください</div>
+        </div>
+
+        <!-- カメラコントロール -->
+        <div class="section">
+            <h3>📷 カメラプリセット</h3>
+            <div class="button-grid">
+                <button onclick="setCameraPreset('front')">正面</button>
+                <button onclick="setCameraPreset('back')">背面</button>
+                <button onclick="setCameraPreset('left')">左側面</button>
+                <button onclick="setCameraPreset('right')">右側面</button>
+                <button onclick="setCameraPreset('top')">上から</button>
+                <button onclick="setCameraPreset('reset')">リセット</button>
+            </div>
+        </div>
+
+        <!-- 表示設定 -->
+        <div class="section">
+            <h3>🎨 表示設定</h3>
+
+            <label>
+                <input type="checkbox" id="gridToggle" checked>
+                グリッド表示
+            </label>
+
+            <label>
+                <input type="checkbox" id="autoRotate">
+                自動回転
+            </label>
+
+            <div style="margin-top: 15px;">
+                <div class="slider-label">
+                    <span>背景色</span>
+                </div>
+                <input type="color" id="bgColorPicker" value="#333333">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <div class="slider-label">
+                    <span>太陽光の強度</span>
+                    <span class="slider-value" id="directionalLightValue">1.0</span>
+                </div>
+                <input type="range" id="directionalLightSlider" min="0" max="3" step="0.1" value="1.0">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <div class="slider-label">
+                    <span>環境光の強度</span>
+                    <span class="slider-value" id="ambientLightValue">0.5</span>
+                </div>
+                <input type="range" id="ambientLightSlider" min="0" max="2" step="0.1" value="0.5">
+            </div>
+        </div>
+
+        <!-- ブレンドシェイプ -->
+        <div class="section" id="morphSection" style="display: none;">
+            <h3>😊 ブレンドシェイプ</h3>
+            <button class="secondary" onclick="resetMorphTargets()">すべてリセット</button>
+            <div id="morphTargets"></div>
+        </div>
+
+        <!-- ブレンドシェイプ一覧 -->
+        <div class="section" id="blendshapeListSection" style="display: none;">
+            <h3>📋 ブレンドシェイプ一覧</h3>
+
+            <!-- 検索とフィルター -->
+            <input type="text" id="blendshapeSearch" placeholder="🔍 ブレンドシェイプ名で検索...">
+
+            <label>
+                <input type="checkbox" id="lipSyncFilter">
+                リップシンク用のみ表示
+            </label>
+
+            <!-- エクスポートボタン -->
+            <div class="export-buttons">
+                <button onclick="exportBlendShapesJSON()">📄 JSON</button>
+                <button onclick="exportBlendShapesText()">📝 テキスト</button>
+                <button onclick="copyBlendShapesToClipboard()">📋 コピー</button>
+            </div>
+
+            <!-- ブレンドシェイプ一覧 -->
+            <div id="blendshapeListContainer" class="blendshape-list"></div>
+        </div>
+
+        <!-- Visemeテスト -->
+        <div class="section" id="visemeTestSection" style="display: none;">
+            <h3>🎤 Visemeテスト</h3>
+            <div class="info-text">
+                仕様書の「独自Viseme→CC4ブレンドシェイプ対応表」に基づいて口の動きをテストできます。
+            </div>
+
+            <!-- Visemeボタン -->
+            <div class="viseme-grid">
+                <button class="viseme-btn" onclick="applyViseme('silence')" title="無音">
+                    <span class="viseme-name">silence</span>
+                    <span class="viseme-phoneme">無音</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('a')" title="あ、か、さ">
+                    <span class="viseme-name">a</span>
+                    <span class="viseme-phoneme">あ、か、さ</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('i')" title="い、き、し">
+                    <span class="viseme-name">i</span>
+                    <span class="viseme-phoneme">い、き、し</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('u')" title="う、く、す">
+                    <span class="viseme-name">u</span>
+                    <span class="viseme-phoneme">う、く、す</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('e')" title="え、け、せ">
+                    <span class="viseme-name">e</span>
+                    <span class="viseme-phoneme">え、け、せ</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('o')" title="お、こ、そ">
+                    <span class="viseme-name">o</span>
+                    <span class="viseme-phoneme">お、こ、そ</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('n')" title="ん">
+                    <span class="viseme-name">n</span>
+                    <span class="viseme-phoneme">ん</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('k')" title="か、き、く">
+                    <span class="viseme-name">k</span>
+                    <span class="viseme-phoneme">か、き、く</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('s')" title="さ、し、す">
+                    <span class="viseme-name">s</span>
+                    <span class="viseme-phoneme">さ、し、す</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('t')" title="た、ち、つ">
+                    <span class="viseme-name">t</span>
+                    <span class="viseme-phoneme">た、ち、つ</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('h')" title="は、ひ、ふ">
+                    <span class="viseme-name">h</span>
+                    <span class="viseme-phoneme">は、ひ、ふ</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('m')" title="ま、み、む">
+                    <span class="viseme-name">m</span>
+                    <span class="viseme-phoneme">ま、み、む</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('y')" title="や、ゆ、よ">
+                    <span class="viseme-name">y</span>
+                    <span class="viseme-phoneme">や、ゆ、よ</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('r')" title="ら、り、る">
+                    <span class="viseme-name">r</span>
+                    <span class="viseme-phoneme">ら、り、る</span>
+                </button>
+                <button class="viseme-btn" onclick="applyViseme('w')" title="わ">
+                    <span class="viseme-name">w</span>
+                    <span class="viseme-phoneme">わ</span>
+                </button>
+            </div>
+
+            <button class="secondary" onclick="resetViseme()" style="margin-top: 10px;">すべてリセット</button>
+        </div>
+
+        <!-- モデル情報 -->
+        <div class="section">
+            <h3>ℹ️ モデル情報</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-value" id="verticesCount">-</span>
+                    <span class="stat-label">頂点数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="facesCount">-</span>
+                    <span class="stat-label">面数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="meshesCount">-</span>
+                    <span class="stat-label">メッシュ数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="materialsCount">-</span>
+                    <span class="stat-label">マテリアル数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="texturesCount">-</span>
+                    <span class="stat-label">テクスチャ数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="morphTargetsCount">-</span>
+                    <span class="stat-label">ブレンドシェイプ</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- その他 -->
+        <div class="section">
+            <h3>🔧 その他</h3>
+            <button class="secondary" onclick="takeScreenshot()">📸 スクリーンショット</button>
+        </div>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <!-- Three.js -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.167.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.167.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        // ========== シーン、カメラ、レンダラーの設定 ==========
+        const canvas = document.getElementById('canvas');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x333333);
+
+        const camera = new THREE.PerspectiveCamera(
+            45,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+        camera.position.set(0, 1.5, 3);
+
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            preserveDrawingBuffer: true // スクリーンショット用
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // ========== ライト ==========
+        const directionalLight = new THREE.DirectionalLight(0xffffff, Math.PI);
+        directionalLight.position.set(5, 10, 7.5);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.camera.left = -10;
+        directionalLight.shadow.camera.right = 10;
+        directionalLight.shadow.camera.top = 10;
+        directionalLight.shadow.camera.bottom = -10;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        scene.add(directionalLight);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, Math.PI * 0.5);
+        scene.add(ambientLight);
+
+        // ========== グリッド ==========
+        const gridHelper = new THREE.GridHelper(20, 20, 0x888888, 0x444444);
+        scene.add(gridHelper);
+
+        // ========== OrbitControls ==========
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.target.set(0, 1, 0);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 0.5;
+        controls.maxDistance = 50;
+        controls.update();
+
+        // ========== グローバル変数 ==========
+        let currentModel = null;
+        let currentGltf = null;
+        let modelBoundingBox = null;
+        let modelCenter = new THREE.Vector3();
+        let modelSize = new THREE.Vector3();
+        let defaultCameraPosition = new THREE.Vector3(0, 1.5, 3);
+        let defaultCameraTarget = new THREE.Vector3(0, 1, 0);
+        let autoRotateEnabled = false;
+        let morphTargetMeshes = [];
+        let blendShapeData = []; // ブレンドシェイプ一覧データ
+
+        // リップシンク用ブレンドシェイプ名（仕様書 + Character Creator専用Viseme）
+        const lipSyncBlendShapes = [
+            // 標準ブレンドシェイプ
+            'JawOpen', 'MouthClose', 'MouthSmile', 'MouthFunnel',
+            'MouthPucker', 'MouthFrown', 'TongueOut',
+            // 小文字バリエーション
+            'jawOpen', 'mouthClose', 'mouthSmile', 'mouthFunnel',
+            'mouthPucker', 'mouthFrown', 'tongueOut',
+            // アンダースコア形式
+            'Jaw_Open', 'Mouth_Close', 'Mouth_Smile', 'Mouth_Funnel',
+            'Mouth_Pucker', 'Mouth_Frown', 'Tongue_Out',
+            // Character Creator専用Viseme（新規追加）
+            'V_Open', 'V_Wide', 'V_Tight_O', 'V_Tight',
+            'V_Explosive', 'V_Dental_Lip', 'V_Affricate', 'V_Lip_Open'
+        ];
+
+        // Viseme → CC4ブレンドシェイプ対応表（Character Creator専用Viseme優先）
+        // 注: 配列で複数のブレンドシェイプを指定可能
+        const visemeMapping = {
+            // === 日本語5母音 ===
+            'a': ['V_Open', 'JawOpen'],  // あ：口を大きく開く + 顎を開く（組み合わせ）
+            'i': 'V_Wide',               // い：横に広げる
+            'u': 'V_Tight_O',            // う：丸くすぼめる
+            'e': 'V_Open',               // え：少し開く（強度で調整）
+            'o': 'V_Tight_O',            // お：丸くすぼめる（強度で調整）
+
+            // === 子音 ===
+            'silence': 'MouthClose',  // 無音：口を閉じる
+            'n': 'MouthClose',        // ん：口を閉じる
+            'k': 'MouthClose',        // か行：口を閉じる
+            's': 'MouthClose',        // さ行：口を閉じる
+            't': 'MouthClose',        // た行：口を閉じる
+            'm': 'V_Explosive',       // ま行：破裂音
+            'h': 'V_Lip_Open',        // は行：唇を開く
+            'y': 'V_Wide',            // や行：「い」に近い
+            'r': 'TongueOut',         // ら行：舌を出す
+            'w': 'V_Tight_O'          // わ行：丸める
+        };
+
+        // Visemeごとの最適強度（推測値）
+        // 注: オブジェクトで個別強度指定可能、数値で全体強度指定
+        const visemeStrength = {
+            // === 日本語5母音 ===
+            'a': { 'V_Open': 0.6, 'JawOpen': 0.7 },  // 組み合わせで大きく開く
+            'i': 0.5,    // V_Wide - 横に広げる
+            'u': 0.6,    // V_Tight_O - すぼめる
+            'e': 0.35,   // V_Open - 少し開く（aより弱め）
+            'o': 0.65,   // V_Tight_O - やや強めにすぼめる（uより丸く）
+
+            // === 子音 ===
+            'silence': 0.13,  // MouthClose
+            'n': 0.13,        // MouthClose
+            'k': 0.13,        // MouthClose
+            's': 0.13,        // MouthClose
+            't': 0.13,        // MouthClose
+            'm': 0.5,         // V_Explosive
+            'h': 0.4,         // V_Lip_Open
+            'y': 0.5,         // V_Wide
+            'r': 0.6,         // TongueOut
+            'w': 0.6          // V_Tight_O
+        };
+
+        // アニメーション用の変数
+        let currentVisemeAnimation = null;
+
+        // ========== GLBローダー ==========
+        const loader = new GLTFLoader();
+
+        // モデルを読み込む関数
+        function loadGLB(url, filename = 'model.glb') {
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+            const fileInfo = document.getElementById('fileInfo');
+
+            loading.classList.remove('hidden');
+            loadingText.textContent = 'モデルを読み込み中...';
+            fileInfo.textContent = `${filename} を読み込み中...`;
+            fileInfo.className = 'info-text';
+
+            // 既存のモデルを削除
+            if (currentModel) {
+                scene.remove(currentModel);
+                currentModel.traverse((child) => {
+                    if (child.geometry) child.geometry.dispose();
+                    if (child.material) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(m => m.dispose());
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                });
+            }
+
+            loader.load(
+                url,
+                (gltf) => {
+                    currentGltf = gltf;
+                    currentModel = gltf.scene;
+                    scene.add(currentModel);
+
+                    // モデルのバウンディングボックスを計算
+                    calculateBoundingBox();
+
+                    // カメラ位置を自動調整
+                    adjustCameraToModel();
+
+                    // モデル情報を更新
+                    updateModelInfo(gltf);
+
+                    // ブレンドシェイプを検出
+                    detectMorphTargets();
+
+                    loading.classList.add('hidden');
+                    fileInfo.textContent = `✓ ${filename} を読み込みました`;
+                    fileInfo.className = 'info-text success';
+
+                    console.log('GLB loaded:', gltf);
+                },
+                (progress) => {
+                    const percent = (progress.loaded / progress.total * 100).toFixed(0);
+                    loadingText.textContent = `読み込み中... ${percent}%`;
+                },
+                (error) => {
+                    console.error('GLB load error:', error);
+                    loading.classList.add('hidden');
+                    fileInfo.textContent = `✗ エラー: ${error.message}`;
+                    fileInfo.className = 'info-text error';
+                }
+            );
+        }
+
+        // バウンディングボックスを計算
+        function calculateBoundingBox() {
+            if (!currentModel) return;
+
+            modelBoundingBox = new THREE.Box3().setFromObject(currentModel);
+            modelBoundingBox.getCenter(modelCenter);
+            modelBoundingBox.getSize(modelSize);
+
+            console.log('Model center:', modelCenter);
+            console.log('Model size:', modelSize);
+
+            // モデルを地面（Y=0）に配置
+            const yOffset = modelBoundingBox.min.y;
+            currentModel.position.y = -yOffset;
+
+            // バウンディングボックスを再計算
+            modelBoundingBox.setFromObject(currentModel);
+            modelBoundingBox.getCenter(modelCenter);
+            modelBoundingBox.getSize(modelSize);
+        }
+
+        // カメラ位置を自動調整（全身が見えるように）
+        function adjustCameraToModel() {
+            if (!modelBoundingBox) return;
+
+            // モデルの最大サイズを取得
+            const maxDim = Math.max(modelSize.x, modelSize.y, modelSize.z);
+
+            // カメラ距離を計算（全身が収まる距離）
+            const fov = camera.fov * (Math.PI / 180);
+            const cameraDistance = maxDim / (2 * Math.tan(fov / 2)) * 1.5;
+
+            // カメラ位置を設定（正面やや上から）
+            const cameraHeight = modelCenter.y + modelSize.y * 0.2;
+            defaultCameraPosition.set(0, cameraHeight, cameraDistance);
+            defaultCameraTarget.copy(modelCenter);
+
+            // カメラとコントロールを更新
+            camera.position.copy(defaultCameraPosition);
+            controls.target.copy(defaultCameraTarget);
+            controls.update();
+
+            console.log('Camera adjusted - Distance:', cameraDistance, 'Height:', cameraHeight);
+        }
+
+        // モデル情報を更新
+        function updateModelInfo(gltf) {
+            let vertices = 0;
+            let faces = 0;
+            let meshes = 0;
+            const materials = new Set();
+            const textures = new Set();
+
+            gltf.scene.traverse((child) => {
+                if (child.isMesh) {
+                    meshes++;
+                    if (child.geometry) {
+                        const positions = child.geometry.attributes.position;
+                        if (positions) vertices += positions.count;
+
+                        const index = child.geometry.index;
+                        if (index) {
+                            faces += index.count / 3;
+                        } else if (positions) {
+                            faces += positions.count / 3;
+                        }
+                    }
+
+                    if (child.material) {
+                        const mats = Array.isArray(child.material) ? child.material : [child.material];
+                        mats.forEach(mat => {
+                            materials.add(mat.uuid);
+
+                            // テクスチャを収集
+                            if (mat.map) textures.add(mat.map.uuid);
+                            if (mat.normalMap) textures.add(mat.normalMap.uuid);
+                            if (mat.roughnessMap) textures.add(mat.roughnessMap.uuid);
+                            if (mat.metalnessMap) textures.add(mat.metalnessMap.uuid);
+                            if (mat.emissiveMap) textures.add(mat.emissiveMap.uuid);
+                            if (mat.aoMap) textures.add(mat.aoMap.uuid);
+                        });
+                    }
+                }
+            });
+
+            document.getElementById('verticesCount').textContent = vertices.toLocaleString();
+            document.getElementById('facesCount').textContent = Math.floor(faces).toLocaleString();
+            document.getElementById('meshesCount').textContent = meshes;
+            document.getElementById('materialsCount').textContent = materials.size;
+            document.getElementById('texturesCount').textContent = textures.size;
+        }
+
+        // ブレンドシェイプ（Morph Targets）を検出
+        function detectMorphTargets() {
+            morphTargetMeshes = [];
+            const morphTargetsContainer = document.getElementById('morphTargets');
+            const morphSection = document.getElementById('morphSection');
+            morphTargetsContainer.innerHTML = '';
+
+            if (!currentModel) return;
+
+            let totalMorphTargets = 0;
+
+            currentModel.traverse((child) => {
+                if (child.isMesh && child.morphTargetDictionary && child.morphTargetInfluences) {
+                    morphTargetMeshes.push(child);
+
+                    const morphNames = Object.keys(child.morphTargetDictionary);
+                    totalMorphTargets += morphNames.length;
+
+                    morphNames.forEach((morphName, index) => {
+                        const morphItem = document.createElement('div');
+                        morphItem.className = 'morph-item';
+
+                        const morphNameLabel = document.createElement('div');
+                        morphNameLabel.className = 'morph-name';
+                        morphNameLabel.textContent = morphName;
+
+                        const sliderContainer = document.createElement('div');
+                        sliderContainer.className = 'slider-label';
+
+                        const sliderLabel = document.createElement('span');
+                        sliderLabel.textContent = '強度';
+
+                        const sliderValue = document.createElement('span');
+                        sliderValue.className = 'slider-value';
+                        sliderValue.textContent = '0.0';
+
+                        sliderContainer.appendChild(sliderLabel);
+                        sliderContainer.appendChild(sliderValue);
+
+                        const slider = document.createElement('input');
+                        slider.type = 'range';
+                        slider.min = '0';
+                        slider.max = '1';
+                        slider.step = '0.01';
+                        slider.value = '0';
+                        slider.addEventListener('input', (e) => {
+                            const value = parseFloat(e.target.value);
+                            sliderValue.textContent = value.toFixed(2);
+                            child.morphTargetInfluences[index] = value;
+                        });
+
+                        morphItem.appendChild(morphNameLabel);
+                        morphItem.appendChild(sliderContainer);
+                        morphItem.appendChild(slider);
+                        morphTargetsContainer.appendChild(morphItem);
+                    });
+                }
+            });
+
+            document.getElementById('morphTargetsCount').textContent = totalMorphTargets;
+
+            if (totalMorphTargets > 0) {
+                morphSection.style.display = 'block';
+            } else {
+                morphSection.style.display = 'none';
+            }
+
+            console.log('Detected morph targets:', totalMorphTargets);
+
+            // ブレンドシェイプ一覧を生成
+            generateBlendShapeList();
+
+            // Visemeテストセクションを表示
+            if (totalMorphTargets > 0) {
+                document.getElementById('visemeTestSection').style.display = 'block';
+            } else {
+                document.getElementById('visemeTestSection').style.display = 'none';
+            }
+        }
+
+        // ブレンドシェイプ一覧を生成
+        function generateBlendShapeList() {
+            blendShapeData = [];
+            const blendshapeListSection = document.getElementById('blendshapeListSection');
+
+            if (!currentModel) return;
+
+            // ブレンドシェイプデータを収集
+            currentModel.traverse((child) => {
+                if (child.isMesh && child.morphTargetDictionary && child.morphTargetInfluences) {
+                    const meshName = child.name || 'Unnamed Mesh';
+                    const morphNames = Object.keys(child.morphTargetDictionary);
+
+                    morphNames.forEach((morphName) => {
+                        const index = child.morphTargetDictionary[morphName];
+                        const isLipSync = isLipSyncBlendShape(morphName);
+
+                        blendShapeData.push({
+                            meshName: meshName,
+                            name: morphName,
+                            index: index,
+                            isLipSync: isLipSync,
+                            mesh: child
+                        });
+                    });
+                }
+            });
+
+            if (blendShapeData.length > 0) {
+                blendshapeListSection.style.display = 'block';
+                displayBlendShapeList();
+            } else {
+                blendshapeListSection.style.display = 'none';
+            }
+
+            console.log('BlendShape data collected:', blendShapeData.length);
+        }
+
+        // リップシンク用ブレンドシェイプかどうかを判定
+        function isLipSyncBlendShape(name) {
+            return lipSyncBlendShapes.some(lsName =>
+                name.toLowerCase().includes(lsName.toLowerCase()) ||
+                lsName.toLowerCase().includes(name.toLowerCase())
+            );
+        }
+
+        // ブレンドシェイプ一覧を表示
+        function displayBlendShapeList(filterText = '', lipSyncOnly = false) {
+            const container = document.getElementById('blendshapeListContainer');
+            container.innerHTML = '';
+
+            // フィルター処理
+            let filteredData = blendShapeData;
+
+            if (filterText) {
+                filteredData = filteredData.filter(bs =>
+                    bs.name.toLowerCase().includes(filterText.toLowerCase())
+                );
+            }
+
+            if (lipSyncOnly) {
+                filteredData = filteredData.filter(bs => bs.isLipSync);
+            }
+
+            if (filteredData.length === 0) {
+                container.innerHTML = '<div class="no-results">該当するブレンドシェイプがありません</div>';
+                return;
+            }
+
+            // メッシュごとにグループ化
+            const groupedByMesh = filteredData.reduce((acc, bs) => {
+                if (!acc[bs.meshName]) {
+                    acc[bs.meshName] = [];
+                }
+                acc[bs.meshName].push(bs);
+                return acc;
+            }, {});
+
+            // メッシュごとに表示
+            Object.keys(groupedByMesh).forEach(meshName => {
+                const meshGroup = document.createElement('div');
+                meshGroup.className = 'mesh-group';
+
+                // メッシュヘッダー
+                const meshHeader = document.createElement('div');
+                meshHeader.className = 'mesh-header';
+                meshHeader.innerHTML = `
+                    <span>📁 ${meshName} (${groupedByMesh[meshName].length})</span>
+                    <span class="toggle-icon">▼</span>
+                `;
+
+                // 折りたたみ機能
+                const blendShapeContainer = document.createElement('div');
+                blendShapeContainer.className = 'blendshape-container';
+
+                meshHeader.addEventListener('click', () => {
+                    meshHeader.classList.toggle('collapsed');
+                    blendShapeContainer.style.display =
+                        meshHeader.classList.contains('collapsed') ? 'none' : 'block';
+                });
+
+                // ブレンドシェイプアイテムを作成
+                groupedByMesh[meshName].forEach(bs => {
+                    const item = document.createElement('div');
+                    item.className = 'blendshape-item';
+                    if (bs.isLipSync) {
+                        item.classList.add('lip-sync');
+                    }
+                    if (filterText && bs.name.toLowerCase().includes(filterText.toLowerCase())) {
+                        item.classList.add('highlight');
+                    }
+
+                    item.innerHTML = `
+                        <span class="blendshape-index">[${bs.index}]</span>
+                        <span class="blendshape-name">${bs.name}</span>
+                        ${bs.isLipSync ? '<span class="badge lip-sync">🎤 リップシンク</span>' : ''}
+                    `;
+
+                    blendShapeContainer.appendChild(item);
+                });
+
+                meshGroup.appendChild(meshHeader);
+                meshGroup.appendChild(blendShapeContainer);
+                container.appendChild(meshGroup);
+            });
+        }
+
+        // ブレンドシェイプをリセット
+        window.resetMorphTargets = function() {
+            morphTargetMeshes.forEach(mesh => {
+                if (mesh.morphTargetInfluences) {
+                    mesh.morphTargetInfluences.fill(0);
+                }
+            });
+
+            // スライダーもリセット
+            const sliders = document.querySelectorAll('#morphTargets input[type="range"]');
+            const values = document.querySelectorAll('#morphTargets .slider-value');
+            sliders.forEach(slider => slider.value = 0);
+            values.forEach(value => value.textContent = '0.0');
+
+            console.log('Morph targets reset');
+        };
+
+        // ========== Viseme機能 ==========
+
+        // ブレンドシェイプ名を検索（CC4形式に対応 + 重複除外）
+        function findBlendShapeNames(baseName) {
+            const foundNames = [];
+            const uniqueMeshes = new Set();
+
+            // 名前のバリエーションを生成
+            const variations = [
+                baseName,                           // MouthSmile
+                baseName.replace(/([A-Z])/g, '_$1').substring(1), // Mouth_Smile
+                baseName + '_L',                    // MouthSmile_L
+                baseName + '_R',                    // MouthSmile_R
+                baseName.replace(/([A-Z])/g, '_$1').substring(1) + '_L', // Mouth_Smile_L
+                baseName.replace(/([A-Z])/g, '_$1').substring(1) + '_R', // Mouth_Smile_R
+                baseName + '_Up_L',
+                baseName + '_Up_R',
+                baseName + '_Down_L',
+                baseName + '_Down_R',
+                baseName.replace(/([A-Z])/g, '_$1').substring(1) + '_Up_L',
+                baseName.replace(/([A-Z])/g, '_$1').substring(1) + '_Up_R',
+                baseName.replace(/([A-Z])/g, '_$1').substring(1) + '_Down_L',
+                baseName.replace(/([A-Z])/g, '_$1').substring(1) + '_Down_R'
+            ];
+
+            // 各メッシュから1つだけ取得（重複除外）
+            morphTargetMeshes.forEach(mesh => {
+                // このメッシュは既に処理済み
+                if (uniqueMeshes.has(mesh.uuid)) return;
+
+                if (mesh.morphTargetDictionary) {
+                    // このメッシュからマッチする最初のブレンドシェイプを見つける
+                    for (const morphName of Object.keys(mesh.morphTargetDictionary)) {
+                        let matched = false;
+
+                        for (const variant of variations) {
+                            if (morphName === variant || morphName.toLowerCase() === variant.toLowerCase()) {
+                                foundNames.push({
+                                    mesh: mesh,
+                                    name: morphName,
+                                    index: mesh.morphTargetDictionary[morphName]
+                                });
+                                uniqueMeshes.add(mesh.uuid);
+                                matched = true;
+                                break;
+                            }
+                        }
+
+                        if (matched) break; // このメッシュからは1つだけ
+                    }
+                }
+            });
+
+            return foundNames;
+        }
+
+        // Visemeを適用（アニメーション付き）
+        window.applyViseme = function(visemeName) {
+            // 現在のアニメーションをキャンセル
+            if (currentVisemeAnimation) {
+                cancelAnimationFrame(currentVisemeAnimation);
+                currentVisemeAnimation = null;
+            }
+
+            // Visemeに対応するブレンドシェイプ名を取得（配列対応）
+            let blendShapeNames = visemeMapping[visemeName];
+            if (!blendShapeNames) {
+                console.warn(`Unknown viseme: ${visemeName}`);
+                return;
+            }
+
+            // 文字列の場合は配列に変換
+            if (!Array.isArray(blendShapeNames)) {
+                blendShapeNames = [blendShapeNames];
+            }
+
+            // 全てのブレンドシェイプを検索
+            const allBlendShapes = [];
+            blendShapeNames.forEach(blendShapeName => {
+                const found = findBlendShapeNames(blendShapeName);
+                if (found.length > 0) {
+                    // ブレンドシェイプ名を各要素に追加（強度マッピング用）
+                    found.forEach(bs => {
+                        bs.blendShapeType = blendShapeName;
+                    });
+                    allBlendShapes.push(...found);
+                } else {
+                    console.warn(`BlendShape not found for: ${blendShapeName}`);
+                }
+            });
+
+            if (allBlendShapes.length === 0) {
+                console.warn(`No blend shapes found for viseme: ${visemeName}`);
+                return;
+            }
+
+            // Visemeごとの最適強度を取得
+            const strengthConfig = visemeStrength[visemeName] || 1.0;
+
+            console.log(`Applying viseme '${visemeName}' -> [${blendShapeNames.join(', ')}]`);
+            console.log(`Found ${allBlendShapes.length} blend shapes:`, allBlendShapes.map(bs => bs.name));
+            console.log(`Strength config:`, strengthConfig);
+
+            // すべてのブレンドシェイプをリセット
+            window.resetMorphTargets();
+
+            // アニメーション（0 → maxStrength → 0）
+            const duration = 1000; // 1秒
+            const startTime = performance.now();
+
+            function animate() {
+                const elapsed = performance.now() - startTime;
+                const progress = elapsed / duration;
+
+                if (progress >= 1) {
+                    // アニメーション終了
+                    allBlendShapes.forEach(bs => {
+                        bs.mesh.morphTargetInfluences[bs.index] = 0;
+                    });
+                    currentVisemeAnimation = null;
+                    return;
+                }
+
+                // イージング（0→1→0の三角波）
+                let progressValue;
+                if (progress < 0.5) {
+                    // 0 → 1 (前半)
+                    progressValue = progress * 2;
+                } else {
+                    // 1 → 0 (後半)
+                    progressValue = (1 - progress) * 2;
+                }
+
+                // 全てのブレンドシェイプに値を適用
+                allBlendShapes.forEach(bs => {
+                    // 強度を取得（個別設定またはデフォルト）
+                    let strength;
+                    if (typeof strengthConfig === 'object') {
+                        // オブジェクトの場合、ブレンドシェイプタイプごとの強度を取得
+                        strength = strengthConfig[bs.blendShapeType] || 1.0;
+                    } else {
+                        // 数値の場合、全体に適用
+                        strength = strengthConfig;
+                    }
+
+                    const value = progressValue * strength;
+                    bs.mesh.morphTargetInfluences[bs.index] = value;
+                });
+
+                currentVisemeAnimation = requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            // ボタンのアクティブ状態を表示（一時的）
+            const buttons = document.querySelectorAll('.viseme-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event?.target?.closest('.viseme-btn')?.classList.add('active');
+            setTimeout(() => {
+                event?.target?.closest('.viseme-btn')?.classList.remove('active');
+            }, 300);
+        };
+
+        // Visemeリセット
+        window.resetViseme = function() {
+            if (currentVisemeAnimation) {
+                cancelAnimationFrame(currentVisemeAnimation);
+                currentVisemeAnimation = null;
+            }
+            window.resetMorphTargets();
+            console.log('Viseme reset');
+        };
+
+        // カメラプリセット
+        window.setCameraPreset = function(preset) {
+            if (!modelBoundingBox) return;
+
+            const distance = defaultCameraPosition.length();
+            let targetPos = new THREE.Vector3();
+            let targetLookAt = modelCenter.clone();
+
+            switch(preset) {
+                case 'front':
+                    targetPos.set(0, modelCenter.y, distance);
+                    break;
+                case 'back':
+                    targetPos.set(0, modelCenter.y, -distance);
+                    break;
+                case 'left':
+                    targetPos.set(-distance, modelCenter.y, 0);
+                    break;
+                case 'right':
+                    targetPos.set(distance, modelCenter.y, 0);
+                    break;
+                case 'top':
+                    targetPos.set(0, distance * 1.5, 0);
+                    break;
+                case 'reset':
+                    targetPos.copy(defaultCameraPosition);
+                    targetLookAt.copy(defaultCameraTarget);
+                    break;
+            }
+
+            // スムーズなカメラ移動
+            animateCamera(targetPos, targetLookAt);
+        };
+
+        // カメラアニメーション
+        function animateCamera(targetPosition, targetLookAt, duration = 1000) {
+            const startPosition = camera.position.clone();
+            const startLookAt = controls.target.clone();
+            const startTime = performance.now();
+
+            function animate() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // イージング関数（ease-in-out）
+                const eased = progress < 0.5
+                    ? 4 * progress * progress * progress
+                    : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+                camera.position.lerpVectors(startPosition, targetPosition, eased);
+                controls.target.lerpVectors(startLookAt, targetLookAt, eased);
+                controls.update();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
+
+        // スクリーンショット
+        window.takeScreenshot = function() {
+            renderer.render(scene, camera);
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `screenshot_${Date.now()}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+            console.log('Screenshot taken');
+        };
+
+        // ========== ブレンドシェイプエクスポート機能 ==========
+
+        // JSON形式でエクスポート
+        window.exportBlendShapesJSON = function() {
+            if (blendShapeData.length === 0) {
+                alert('ブレンドシェイプが見つかりません');
+                return;
+            }
+
+            // メッシュごとにグループ化
+            const groupedByMesh = blendShapeData.reduce((acc, bs) => {
+                if (!acc[bs.meshName]) {
+                    acc[bs.meshName] = [];
+                }
+                acc[bs.meshName].push({
+                    index: bs.index,
+                    name: bs.name,
+                    isLipSync: bs.isLipSync
+                });
+                return acc;
+            }, {});
+
+            const exportData = {
+                modelName: currentGltf ? (currentGltf.asset?.generator || 'Unknown') : 'Unknown',
+                totalBlendShapes: blendShapeData.length,
+                lipSyncBlendShapes: blendShapeData.filter(bs => bs.isLipSync).length,
+                meshes: Object.keys(groupedByMesh).map(meshName => ({
+                    meshName: meshName,
+                    blendShapeCount: groupedByMesh[meshName].length,
+                    blendShapes: groupedByMesh[meshName]
+                }))
+            };
+
+            const jsonString = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `blendshapes_${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            console.log('Exported BlendShapes as JSON');
+        };
+
+        // テキスト形式でエクスポート
+        window.exportBlendShapesText = function() {
+            if (blendShapeData.length === 0) {
+                alert('ブレンドシェイプが見つかりません');
+                return;
+            }
+
+            let textContent = `ブレンドシェイプ一覧\n`;
+            textContent += `総数: ${blendShapeData.length}\n`;
+            textContent += `リップシンク用: ${blendShapeData.filter(bs => bs.isLipSync).length}\n`;
+            textContent += `\n${'='.repeat(60)}\n\n`;
+
+            // メッシュごとにグループ化
+            const groupedByMesh = blendShapeData.reduce((acc, bs) => {
+                if (!acc[bs.meshName]) {
+                    acc[bs.meshName] = [];
+                }
+                acc[bs.meshName].push(bs);
+                return acc;
+            }, {});
+
+            Object.keys(groupedByMesh).forEach(meshName => {
+                textContent += `📁 ${meshName} (${groupedByMesh[meshName].length}個)\n`;
+                textContent += `${'-'.repeat(60)}\n`;
+
+                groupedByMesh[meshName].forEach(bs => {
+                    const lipSyncMarker = bs.isLipSync ? ' [🎤 リップシンク]' : '';
+                    textContent += `  [${bs.index}] ${bs.name}${lipSyncMarker}\n`;
+                });
+
+                textContent += `\n`;
+            });
+
+            const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `blendshapes_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            console.log('Exported BlendShapes as Text');
+        };
+
+        // クリップボードにコピー
+        window.copyBlendShapesToClipboard = async function() {
+            if (blendShapeData.length === 0) {
+                alert('ブレンドシェイプが見つかりません');
+                return;
+            }
+
+            let textContent = `ブレンドシェイプ一覧 (総数: ${blendShapeData.length})\n\n`;
+
+            // メッシュごとにグループ化
+            const groupedByMesh = blendShapeData.reduce((acc, bs) => {
+                if (!acc[bs.meshName]) {
+                    acc[bs.meshName] = [];
+                }
+                acc[bs.meshName].push(bs);
+                return acc;
+            }, {});
+
+            Object.keys(groupedByMesh).forEach(meshName => {
+                textContent += `${meshName}:\n`;
+                groupedByMesh[meshName].forEach(bs => {
+                    const lipSyncMarker = bs.isLipSync ? ' [リップシンク]' : '';
+                    textContent += `  - ${bs.name}${lipSyncMarker}\n`;
+                });
+                textContent += `\n`;
+            });
+
+            try {
+                await navigator.clipboard.writeText(textContent);
+                alert('ブレンドシェイプ一覧をクリップボードにコピーしました');
+                console.log('Copied BlendShapes to clipboard');
+            } catch (err) {
+                console.error('Failed to copy to clipboard:', err);
+                alert('クリップボードへのコピーに失敗しました');
+            }
+        };
+
+        // ========== UIコントロール ==========
+
+        // Google DriveのURLを直接ダウンロード可能な形式に変換
+        function convertGoogleDriveURL(url) {
+            // Google DriveのファイルIDを抽出
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                const fileId = match[1];
+                // 直接ダウンロード可能なURLに変換
+                return `https://drive.google.com/uc?export=download&id=${fileId}`;
+            }
+            return url;
+        }
+
+        // URLから読み込み
+        window.loadFromURL = function() {
+            const urlInput = document.getElementById('urlInput');
+            let url = urlInput.value.trim();
+
+            if (!url) {
+                alert('URLを入力してください');
+                return;
+            }
+
+            // Google DriveのURLの場合は変換
+            if (url.includes('drive.google.com')) {
+                url = convertGoogleDriveURL(url);
+            }
+
+            // URLからファイル名を取得
+            const filename = url.split('/').pop()?.split('?')[0] || 'model.glb';
+            loadGLB(url, filename);
+        };
+
+        // Enterキーでも読み込み
+        document.getElementById('urlInput').addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                window.loadFromURL();
+            }
+        });
+
+        // ファイル選択
+        document.getElementById('fileInput').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                loadGLB(url, file.name);
+            }
+        });
+
+        // ドラッグ&ドロップ
+        canvas.addEventListener('dragover', (event) => {
+            event.preventDefault();
+        });
+
+        canvas.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const file = event.dataTransfer.files[0];
+            if (file && (file.name.endsWith('.glb') || file.name.endsWith('.gltf'))) {
+                const url = URL.createObjectURL(file);
+                loadGLB(url, file.name);
+            }
+        });
+
+        // グリッド表示切り替え
+        document.getElementById('gridToggle').addEventListener('change', (event) => {
+            gridHelper.visible = event.target.checked;
+        });
+
+        // 自動回転
+        document.getElementById('autoRotate').addEventListener('change', (event) => {
+            autoRotateEnabled = event.target.checked;
+        });
+
+        // 背景色
+        document.getElementById('bgColorPicker').addEventListener('input', (event) => {
+            scene.background = new THREE.Color(event.target.value);
+        });
+
+        // 太陽光の強度
+        document.getElementById('directionalLightSlider').addEventListener('input', (event) => {
+            const value = parseFloat(event.target.value);
+            directionalLight.intensity = value * Math.PI;
+            document.getElementById('directionalLightValue').textContent = value.toFixed(1);
+        });
+
+        // 環境光の強度
+        document.getElementById('ambientLightSlider').addEventListener('input', (event) => {
+            const value = parseFloat(event.target.value);
+            ambientLight.intensity = value * Math.PI;
+            document.getElementById('ambientLightValue').textContent = value.toFixed(1);
+        });
+
+        // ========== ブレンドシェイプ検索・フィルター ==========
+
+        // 検索機能
+        document.getElementById('blendshapeSearch').addEventListener('input', (event) => {
+            const searchText = event.target.value;
+            const lipSyncOnly = document.getElementById('lipSyncFilter').checked;
+            displayBlendShapeList(searchText, lipSyncOnly);
+        });
+
+        // リップシンクフィルター
+        document.getElementById('lipSyncFilter').addEventListener('change', (event) => {
+            const searchText = document.getElementById('blendshapeSearch').value;
+            const lipSyncOnly = event.target.checked;
+            displayBlendShapeList(searchText, lipSyncOnly);
+        });
+
+        // ========== ウィンドウリサイズ ==========
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ========== アニメーションループ ==========
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            const deltaTime = clock.getDelta();
+
+            // 自動回転
+            if (autoRotateEnabled && currentModel) {
+                currentModel.rotation.y += deltaTime * 0.5;
+            }
+
+            // OrbitControlsの更新
+            controls.update();
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // ========== 初期読み込み ==========
+        // 起動時にGoogle DriveからGLBファイルを読み込む
+        const defaultGoogleDriveURL = 'https://drive.google.com/file/d/1-RfSEXeTUUmPoyG-m-aSpx4bnUtJLThQ/view?usp=sharing';
+        const downloadURL = convertGoogleDriveURL(defaultGoogleDriveURL);
+
+        // URLを入力欄に表示
+        document.getElementById('urlInput').value = defaultGoogleDriveURL;
+
+        // モデルを読み込み
+        loadGLB(downloadURL, 'model.glb');
+
+    </script>
+</body>
 </html>
